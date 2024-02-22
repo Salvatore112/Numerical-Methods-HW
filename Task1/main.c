@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <omp.h>
 #include "seidel.h"
 
 float randfrom(double min, double max) {
@@ -28,6 +29,5 @@ int main() {
             u[i][j] = randfrom(-100.0, 100.0);
         }
     }
-
-    printf("%d iterations", seidel1(u, eps, N));
+    printf("%d iterations", seidel2(u, eps, N));
 }
