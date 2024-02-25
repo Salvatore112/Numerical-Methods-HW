@@ -18,7 +18,7 @@ int main() {
     }
 
     clock_t begin = clock();
-    printf("%d iterations\n", seidel4(u, eps, N));
+    printf("%d iterations\n", seidel6(u, eps, N));
     clock_t end = clock();
     float time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
     printf("time spent %f", time_spent);

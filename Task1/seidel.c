@@ -128,3 +128,57 @@ int seidel4(double** u, double eps, int N) {
     deleteArray(un, N);
     return counter;
 }
+
+int seidel6(double** u, double eps, int N) {
+    double h = 1.0 / (N + 1);
+    int i, j, nx = 0;
+    int NB = 2;
+    double temp, d, dmax, dm = 0;
+    int counter = 0;
+    omp_lock_t dmax_lock;
+    omp_init_lock (&dmax_lock);
+    do {
+        counter += 1;
+        dmax = 0.0;
+        // wave growth (wave size is nx+1)
+        for ( nx=0; nx<NB; nx++ ) {
+#pragma omp parallel for shared(nx) private(i,j)
+            for ( i=0; i<nx+1; i++ ) {
+                j = nx - i;
+                for (i = 1; i < N - 1; i++) {
+                    for (j = 1; j < N - 1; j++) {
+                        temp = u[i][j];
+                        double f = (u[i - 1][j] + u[i + 1][j] + u[i][j - 1] + u[i][j + 1] - 4 * u[i][j]) / h * h;
+                        u[i][j] = 0.25 * (u[i - 1][j] + u[i + 1][j] +
+                                          u[i][j - 1] + u[i][j + 1] - h * h * f);
+                        dm = fabs(temp - u[i][j]);
+                        if (dmax < dm) {
+                            dmax = dm;
+                        }
+                    }
+                }
+            } // the end parallel region
+        }
+        // wave attenuation
+        for ( nx=NB-2; nx>-1; nx-- ) {
+#pragma omp parallel for shared(nx) private(i,j)
+            for ( i=0; i<nx+1; i++ ) {
+                j = 2*(NB-1) - nx - i;
+                for (i = 1; i < N - 1; i++) {
+                    for (j = 1; j < N - 1; j++) {
+                        temp = u[i][j];
+                        double f = (u[i - 1][j] + u[i + 1][j] + u[i][j - 1] + u[i][j + 1] - 4 * u[i][j]) / h * h;
+                        u[i][j] = 0.25 * (u[i - 1][j] + u[i + 1][j] +
+                                          u[i][j - 1] + u[i][j + 1] - h * h * f);
+                        dm = fabs(temp - u[i][j]);
+                        if (dmax < dm) {
+                            dmax = dm;
+                        }
+                    }
+                }
+            } // the end parallel region
+        }
+    } while ( dmax > eps );
+    return counter;
+}
+
