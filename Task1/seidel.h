@@ -6,10 +6,10 @@
 #include "utils.h"
 
 // Implementation of 11.1 algorithm
-int seidel1(double** u, double eps, int N);
+int seidel1(double** u, double** f, double eps, int N);
 
 // Implementation of 11.2 algorithm
-int seidel2(double** u, double eps, int N);
+int seidel2(double** u, double** f, double eps, int N);
 
 // Implementation of 11.3 algorithm
 int seidel3(double** u, double eps, int N);

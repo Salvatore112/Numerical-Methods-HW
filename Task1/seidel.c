@@ -1,7 +1,7 @@
 #include "seidel.h"
 
 // Implementation of 11.1 algorithm version
-int seidel1(double** u, double eps, int N) {
+int seidel1(double** u, double** f, double eps, int N) {
     double h = 1.0 / (N + 1);
     int i, j = 0;
     double dmax, dm, temp = 0.0;
@@ -9,12 +9,11 @@ int seidel1(double** u, double eps, int N) {
     do {
         dmax = 0.0; // maximum u's values change
         counter += 1;
-        for (i = 1; i < N - 1; i++) {
-            for (j = 1; j < N - 1; j++) {
+        for (i = 1; i < N + 1; i++) {
+            for (j = 1; j < N + 1; j++) {
                 temp = u[i][j];
-                double f = (u[i - 1][j] + u[i + 1][j] + u[i][j - 1] + u[i][j + 1] - 4 * u[i][j]) / h * h;
                 u[i][j] = 0.25 * (u[i - 1][j] + u[i + 1][j] +
-                                  u[i][j - 1] + u[i][j + 1] - h * h * f);
+                                  u[i][j - 1] + u[i][j + 1] - h * h * f[i][j]);
                 dm = fabs(temp - u[i][j]);
                 if (dmax < dm) {
                     dmax = dm;
@@ -26,7 +25,7 @@ int seidel1(double** u, double eps, int N) {
 }
 
 // Implementation of 11.2 algorithm version
-int seidel2(double** u, double eps, int N) {
+int seidel2(double** u, double** f,  double eps, int N) {
     double h = 1.0 / (N + 1);
     int i, j = 0;
     double temp, d, dmax = 0;
@@ -36,16 +35,15 @@ int seidel2(double** u, double eps, int N) {
     do {
         dmax = 0.0; // maximum u's values change
         counter += 1;
-    #pragma omp parallel for shared(u, dmax) \
+    #pragma omp parallel for shared(u, N, dmax) \
                              private(i, j, temp, d)
-        for (i = 1; i < N - 1; i++) {
-    #pragma omp parallel for shared(u, dmax) \
+        for (i = 1; i < N + 1; i++) {
+    #pragma omp parallel for shared(u, N, dmax) \
                              private(j, temp, d)
-            for (j = 1; j < N - 1; j++) {
+            for (j = 1; j < N + 1; j++) {
                 temp = u[i][j];
-                double f = (u[i - 1][j] + u[i + 1][j] + u[i][j - 1] + u[i][j + 1] - 4 * u[i][j]) / h * h;
                 u[i][j] = 0.25 * (u[i - 1][j] + u[i + 1][j] +
-                                  u[i][j - 1] + u[i][j + 1] - h * h * f);
+                                  u[i][j - 1] + u[i][j + 1] - h * h * f[i][j]);
                 d = fabs(temp - u[i][j]);
                 omp_set_lock(&dmax_lock);
                 if (dmax < d) {
