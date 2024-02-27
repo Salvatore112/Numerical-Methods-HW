@@ -57,7 +57,7 @@ int seidel2(double** u, double** f,  double eps, int N) {
 }
 
 // Implementation of 11.3 algorithm version
-int seidel3(double** u, double eps, int N) {
+int seidel3(double** u, double** f, double eps, int N) {
     double h = 1.0 / (N + 1);
     int i, j = 0;
     double temp, d, dmax, dm = 0;
@@ -67,15 +67,14 @@ int seidel3(double** u, double eps, int N) {
     do {
         dmax = 0.0; // maximum u's values change
         iterations += 1;
-    #pragma omp parallel for shared(u,dmax)\
+    #pragma omp parallel for shared(u, N, dmax)\
                              private(i,j,temp,d,dm)
-        for (i = 1; i < N - 1; i++) {
+        for (i = 1; i < N + 1; i++) {
             dm = 0;
-            for (j = 1; j < N - 1; j++) {
+            for (j = 1; j < N + 1; j++) {
                 temp = u[i][j];
-                double f = (u[i - 1][j] + u[i + 1][j] + u[i][j - 1] + u[i][j + 1] - 4 * u[i][j]) / h * h;
                 u[i][j] = 0.25 * (u[i - 1][j] + u[i + 1][j] +
-                                  u[i][j - 1] + u[i][j + 1] - h * h * f);
+                                  u[i][j - 1] + u[i][j + 1] - h * h * f[i][j]);
                 d = fabs(temp - u[i][j]);
                 if (dm < d) {
                     dm = d;
@@ -90,8 +89,8 @@ int seidel3(double** u, double eps, int N) {
 }
 
 // Implementation of 11.4 algorithm version
-int seidel4(double** u, double eps, int N) {
-    double **un = makeArray(N,N);
+int seidel4(double** u, double** f, double eps, int N) {
+    double **un = makeArray(N + 2,N + 2);
     double h = 1.0 / (N + 1);
     int i, j = 0;
     double temp, d, dmax, dm = 0;
@@ -101,15 +100,14 @@ int seidel4(double** u, double eps, int N) {
     do {
         dmax = 0.0; // maximum u's values change
         counter += 1;
-    #pragma omp parallel for shared(u,dmax)\
+    #pragma omp parallel for shared(u, N, dmax)\
                              private(i,j,temp,d,dm)
-        for (i = 1; i < N - 1; i++) {
+        for (i = 1; i < N + 1; i++) {
             dm = 0;
-            for (j = 1; j < N - 1; j++) {
+            for (j = 1; j < N + 1; j++) {
                 temp = u[i][j];
-                double f = (u[i - 1][j] + u[i + 1][j] + u[i][j - 1] + u[i][j + 1] - 4 * u[i][j]) / h * h;
                 un[i][j] = 0.25 * (u[i - 1][j] + u[i + 1][j] +
-                                  u[i][j - 1] + u[i][j + 1] - h * h * f);
+                                  u[i][j - 1] + u[i][j + 1] - h * h * f[i][j]);
                 d = fabs(temp - un[i][j]);
                 if (dm < d) {
                     dm = d;
@@ -119,15 +117,15 @@ int seidel4(double** u, double eps, int N) {
             if ( dmax < dm ) dmax = dm;
             omp_unset_lock(&dmax_lock);
         } // the end of outer parallel region
-        for ( i = 1; i < N - 1; i++ ) // data update
-            for ( j = 1; j < N - 1; j++ )
+        for ( i = 1; i < N + 1; i++ ) // data update
+            for ( j = 1; j < N + 1; j++ )
                 u[i][j] = un[i][j];
     } while (dmax > eps);
     deleteArray(un, N);
     return counter;
 }
 
-int seidel6(double** u, double eps, int N) {
+int seidel6(double** u, double** f, double eps, int N) {
     double h = 1.0 / (N + 1);
     int i, j, nx = 0;
     int NB = 2;
@@ -143,12 +141,11 @@ int seidel6(double** u, double eps, int N) {
 #pragma omp parallel for shared(nx) private(i,j)
             for ( i=0; i<nx+1; i++ ) {
                 j = nx - i;
-                for (i = 1; i < N - 1; i++) {
-                    for (j = 1; j < N - 1; j++) {
+                for (i = 1; i < N + 1; i++) {
+                    for (j = 1; j < N + 1; j++) {
                         temp = u[i][j];
-                        double f = (u[i - 1][j] + u[i + 1][j] + u[i][j - 1] + u[i][j + 1] - 4 * u[i][j]) / h * h;
                         u[i][j] = 0.25 * (u[i - 1][j] + u[i + 1][j] +
-                                          u[i][j - 1] + u[i][j + 1] - h * h * f);
+                                          u[i][j - 1] + u[i][j + 1] - h * h * f[i][j]);
                         dm = fabs(temp - u[i][j]);
                         if (dmax < dm) {
                             dmax = dm;
@@ -162,12 +159,11 @@ int seidel6(double** u, double eps, int N) {
 #pragma omp parallel for shared(nx) private(i,j)
             for ( i=0; i<nx+1; i++ ) {
                 j = 2*(NB-1) - nx - i;
-                for (i = 1; i < N - 1; i++) {
-                    for (j = 1; j < N - 1; j++) {
+                for (i = 1; i < N + 1; i++) {
+                    for (j = 1; j < N + 1; j++) {
                         temp = u[i][j];
-                        double f = (u[i - 1][j] + u[i + 1][j] + u[i][j - 1] + u[i][j + 1] - 4 * u[i][j]) / h * h;
                         u[i][j] = 0.25 * (u[i - 1][j] + u[i + 1][j] +
-                                          u[i][j - 1] + u[i][j + 1] - h * h * f);
+                                          u[i][j - 1] + u[i][j + 1] - h * h * f[i][j]);
                         dm = fabs(temp - u[i][j]);
                         if (dmax < dm) {
                             dmax = dm;

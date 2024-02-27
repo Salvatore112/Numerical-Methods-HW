@@ -21,9 +21,6 @@ int main() {
 
             if (i == 0) {
                 u[i][j] = 100 - 200 * j * h;
-                if(j == N - 1){
-                    continue;
-                }
             } // u(0, j) = 100 - 200 * y where y = j * h
             if (i == 1) {
                 u[i][j] = -100 + 200 * j * h;
@@ -43,7 +40,7 @@ int main() {
     }
 
     clock_t begin = clock();
-    printf("%d iterations\n", seidel2(u,f, eps, N));
+    printf("%d iterations\n", seidel6(u,f, eps, N));
     clock_t end = clock();
     float time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
     printf("time spent %f", time_spent);
