@@ -18,4 +18,4 @@ int seidel3(double** u, double** f, double eps, int N);
 int seidel4(double** u, double** f, double eps, int N);
 
 // Implementation of 11.6 algorithm (Block approach to the wave data processing method)
-int seidel6(double** u, double** f, double eps, int N);
+int seidel6(double** u, double** f, double eps, int N, int NB);

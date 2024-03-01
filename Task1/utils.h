@@ -12,3 +12,6 @@ double** makeArray(int M, int N);
 
 // Free memory taken by 2D array with M rows and N columns
 void deleteArray(double** u, int N);
+
+// Return the minimum of two value
+int min(int oneValue, int anotherValue);

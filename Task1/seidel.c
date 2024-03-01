@@ -125,54 +125,71 @@ int seidel4(double** u, double** f, double eps, int N) {
     return counter;
 }
 
-int seidel6(double** u, double** f, double eps, int N) {
+double processBlockWithIandJCoords(double** u, double** f, double h, int N, int NB, int I, int J) {
+
+    int iStart = 1 + I * NB;
+    int jStart = 1 + J * NB;
+
+    int jFin = min(jStart + NB, N - 1);
+    int iFin = min(iStart + NB, N - 1);
+
+    double dm = 0;
+    for (int i = iStart; i < iFin; i++) {
+        for (int j = jStart; j < jFin; j++) {
+            double temp = u[i][j];
+            u[i][j] = 0.25 * (u[i - 1][j] + u[i + 1][j] + u[i][j - 1] + u[i][j + 1] -
+                                  h * h * f[i][j]);
+            double d = fabs(temp - u[i][j]);
+            if (dm < d) {
+                dm = d;
+            }
+        }
+    }
+    return dm;
+}
+
+int seidel6(double** u, double** f, double eps, int N, int NB) {
     double h = 1.0 / (N + 1);
     int i, j, nx = 0;
-    int NB = 2;
-    double temp, d, dmax, dm = 0;
+    double d, dmax = 0;
     int counter = 0;
-    omp_lock_t dmax_lock;
-    omp_init_lock (&dmax_lock);
+    double* dm = malloc(N * sizeof(dm));
+
     do {
-        counter += 1;
-        dmax = 0.0;
-        // wave growth (wave size is nx+1)
-        for ( nx=0; nx<NB; nx++ ) {
-#pragma omp parallel for shared(nx) private(i,j)
-            for ( i=0; i<nx+1; i++ ) {
+        counter++;
+        dmax = 0;
+        for ( nx = 0; nx < NB; nx++) {
+            dm[nx] = 0;
+#pragma omp parallel for shared(nx, dm, N) private(i, j, d)
+            for (i = 0; i < nx + 1; i++) {
                 j = nx - i;
-                for (i = 1; i < N + 1; i++) {
-                    for (j = 1; j < N + 1; j++) {
-                        temp = u[i][j];
-                        u[i][j] = 0.25 * (u[i - 1][j] + u[i + 1][j] +
-                                          u[i][j - 1] + u[i][j + 1] - h * h * f[i][j]);
-                        dm = fabs(temp - u[i][j]);
-                        if (dmax < dm) {
-                            dmax = dm;
-                        }
-                    }
+
+                d = processBlockWithIandJCoords(u, f, h, N, NB, i, j);
+
+                if (dm[i] < d) {
+                    dm[i] = d;
                 }
             } // the end parallel region
         }
         // wave attenuation
-        for ( nx=NB-2; nx>-1; nx-- ) {
-#pragma omp parallel for shared(nx) private(i,j)
-            for ( i=0; i<nx+1; i++ ) {
-                j = 2*(NB-1) - nx - i;
-                for (i = 1; i < N + 1; i++) {
-                    for (j = 1; j < N + 1; j++) {
-                        temp = u[i][j];
-                        u[i][j] = 0.25 * (u[i - 1][j] + u[i + 1][j] +
-                                          u[i][j - 1] + u[i][j + 1] - h * h * f[i][j]);
-                        dm = fabs(temp - u[i][j]);
-                        if (dmax < dm) {
-                            dmax = dm;
-                        }
-                    }
+        for (nx = NB - 2; nx > - 1; nx--) {
+#pragma omp parallel for shared(nx, N, dm) private(i, j, d)
+            for (i = NB - nx - 1; i < NB; i++) {
+                j = NB + ((NB - 2) - nx) - i;
+                d = processBlockWithIandJCoords(u, f, h, N, NB, i, j);
+                if (dm[i] < d) {
+                    dm[i] = d;
                 }
             } // the end parallel region
         }
-    } while ( dmax > eps );
+        for (i = 0; i < NB; i++) {
+            if (dmax < dm[i]) {
+                dmax = dm[i];
+            }
+        }
+    } while (dmax > eps);
+    free(dm);
+
     return counter;
 }
 
