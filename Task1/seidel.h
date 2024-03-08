@@ -5,17 +5,24 @@
 #include <stdlib.h>
 #include "utils.h"
 
-// Implementation of 11.1 algorithm
-int seidel1(double** u, double** f, double eps, int N);
+// Net containing value of u and f as well as their size, block size, and h
+struct net {
+    double h;
+    int N;
+    int block_size;
 
-// Implementation of 11.2 algorithm
-int seidel2(double** u, double** f, double eps, int N);
+    double** u;
+    double** f;
+} typedef net;
 
-// Implementation of 11.3 algorithm
-int seidel3(double** u, double** f, double eps, int N);
+// Function taking 2 doubles and returning a double
+typedef double (*function) (double, double);
 
-// Implementation of 11.4 algorithm (Gauss-Jacobi)
-int seidel4(double** u, double** f, double eps, int N);
+// Implementation of the algorithm
+int seidel(net* nt, double eps);
 
-// Implementation of 11.6 algorithm (Block approach to the wave data processing method)
-int seidel6(double** u, double** f, double eps, int N, int NB);
+// Fill in f and u matrices with the value of f and u functions
+net* initialize_net(int N, int block_size, function f, function u);
+
+// Free up memory taken by net
+void delete_net(net* net);

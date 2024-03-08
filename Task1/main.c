@@ -1,183 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <limits.h>
 #include "seidel.h"
 #include "utils.h"
 
-int bookFunction(int N, int NB) {
-    omp_set_num_threads(8);
-    double eps = 0.1;
-    double h = 1.0 / (N + 1);
+double bookF(double x, double y) { return 0; }
 
-    double **u = makeArray(N + 2,N + 2);
-    double **f = makeArray(N + 2,N + 2);
+double bookU(double x, double y) { return (1 - 2 * y) * (1 - 2 * x) * 100; }
 
-    // Book's conditions
-    for (int i = 0; i <= N + 1; i ++) {
-        for (int j = 0; j <= N + 1; j++) {
-
-            f[i][j] = 0;
-
-            if (i == 0) {
-                u[i][j] = 100 - 200 * j * h;
-            } // f(0, j) = 100 - 200 * y where y = j * h
-            if (i == 1) {
-                u[i][j] = -100 + 200 * j * h;
-            } // f(1, j) = 100 - 200 * y where y = j * h
-
-            if (j == 0) {
-                u[i][j] = 100 - 200  * i * h;
-            } // f(i, 0) = 100 - 200 * x where x = i * h
-
-            if (j == 1) {
-                u[i][j] = -100 + 200 * i * h;
-            } // f(i, 1) = 100 - 200 * x where x = i * h
-            else {
-                u[i][j] = randfrom(-100.0, 100.0);
-            }
-        }
-    }
-    return seidel6(u,f,eps,N,NB);
+double f_ackermann (double x, double y) {
+    return -20 * exp(-0.2 * sqrt(0.5 * (pow(x, 2) + pow(y, 2)))) - exp(0.5 * (cos(2 * 3.14 * x) + cos(2 * 3.14 * y))) + 2.71 + 20;
 }
 
-// Book function with small boundaries function
-int largeBoundaries(int N, int NB) {
-    omp_set_num_threads(8);
-    double eps = 0.1;
-    double h = 1.0 / (N + 1);
-
-    double **u = makeArray(N + 2,N + 2);
-    double **f = makeArray(N + 2,N + 2);
-
-    for (int i = 0; i <= N + 1; i ++) {
-        for (int j = 0; j <= N + 1; j++) {
-
-            f[i][j] = 0;
-
-            if (i == 0) {
-                u[i][j] = INT_MAX;
-            } // f(0, j) = 100 - 200 * y where y = j * h
-            if (i == N - 1) {
-                u[i][j] = INT_MAX;
-            } // f(1, j) = 100 - 200 * y where y = j * h
-
-            if (j == 0) {
-                u[i][j] = INT_MAX;
-            } // f(i, 0) = 100 - 200 * x where x = i * h
-
-            if (j == N - 1) {
-                u[i][j] = INT_MAX;
-            } // f(i, 1) = 100 - 200 * x where x = i * h
-            else {
-                u[i][j] = randfrom(-100.0, 100.0);
-            }
-        }
-    }
-    return seidel6(u,f,eps,N,NB);
+double sinx (double x, double y) {
+    return sin(x);
 }
 
-// Function that is always 0
-int zeroFunction(int N, int NB) {
-    omp_set_num_threads(8);
-    double eps = 0.1;
-    double h = 1.0 / (N + 1);
-
-    double **u = makeArray(N + 2,N + 2);
-    double **f = makeArray(N + 2,N + 2);
-
-    for (int i = 0; i <= N + 1; i ++) {
-        for (int j = 0; j <= N + 1; j++) {
-
-            f[i][j] = 0;
-
-            u[i][j] = 0;
-        }
-    }
-    return seidel6(u,f,eps,N,NB);
+double cosx (double x, double y) {
+    return -sin(x) - cos(x);
 }
 
-
-// Book function with small boundaries function
-int smallBoundries(int N, int NB) {
-    omp_set_num_threads(8);
-    double eps = 0.1;
-    double h = 1.0 / (N + 1);
-
-    double **u = makeArray(N + 2,N + 2);
-    double **f = makeArray(N + 2,N + 2);
-
-    for (int i = 0; i <= N + 1; i ++) {
-        for (int j = 0; j <= N + 1; j++) {
-
-            f[i][j] = 0;
-
-            if (i == 0) {
-                u[i][j] = INT_MIN;
-            } // f(0, j) = 100 - 200 * y where y = j * h
-            if (i == N - 1) {
-                u[i][j] = INT_MIN;
-            } // f(1, j) = 100 - 200 * y where y = j * h
-
-            if (j == 0) {
-                u[i][j] = INT_MIN;
-            } // f(i, 0) = 100 - 200 * x where x = i * h
-
-            if (j == N - 1) {
-                u[i][j] = INT_MIN;
-            } // f(i, 1) = 100 - 200 * x where x = i * h
-            else {
-                u[i][j] = randfrom(-100.0, 100.0);
-            }
-        }
-    }
-    return seidel6(u,f,eps,N,NB);
-}
-
-// function with exponents
-int exponents(int N, int NB) {
-    omp_set_num_threads(8);
-    double eps = 0.1;
-    double h = 1.0 / (N + 1);
-
-    double **u = makeArray(N + 2,N + 2);
-    double **f = makeArray(N + 2,N + 2);
-
-    for (int i = 0; i <= N + 1; i ++) {
-        for (int j = 0; j <= N + 1; j++) {
-
-            f[i][j] = pow((i * h), (j * h));
-
-            if (i == 0) {
-                u[i][j] = 100 - 200 * j * h;
-            } // f(0, j) = 100 - 200 * y where y = j * h
-            if (i == N - 1) {
-                u[i][j] = 100 - 200 * j * h;
-            } // f(1, j) = 100 - 200 * y where y = j * h
-
-            if (j == 0) {
-                u[i][j] = 100 - 200 * i * h;
-            } // f(i, 0) = 100 - 200 * x where x = i * h
-
-            if (j == N - 1) {
-                u[i][j] = 100 - 200 * i * h;
-            } // f(i, 1) = 100 - 200 * x where x = i * h
-            else {
-                u[i][j] = randfrom(-100.0, 100.0);
-            }
-        }
-    }
-    return seidel6(u,f,eps,N,NB);
-}
 
 int main() {
-    omp_set_num_threads(8);
     srand (time ( NULL));
 
+    function u = bookU;
+    function f = bookF;
+    net* net = initialize_net(200,64, f, u );
+
+    omp_set_num_threads(8);
 
     clock_t begin = clock();
-    printf("%d iterations\n", exponents(1000, 30));
+    printf("%d iterations\n", seidel(net, 0.1));
     clock_t end = clock();
     float time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
     printf("time spent %f", time_spent);
+    delete_net(net);
 }
