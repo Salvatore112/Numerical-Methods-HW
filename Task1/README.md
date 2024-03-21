@@ -22,6 +22,7 @@ $u_1 = x^2 + y$, $u_2 = sqrt{(x^2+y^2)}$, $u_3 = e^x + e^y$
 
 Средние значения из 10-ти запусков
 ![image](https://github.com/Salvatore112/Numerical-Methods-HW/assets/113641510/05c04408-b22f-48d2-9beb-0ef329a27e0f))
+
 Данные по всем запуском, а также информация о доверительных интервалах представлены в таблице 
 [Таблица](https://github.com/Salvatore112/Numerical-Methods-HW/blob/Task1/Task1/results/u1.xlsx)
 
