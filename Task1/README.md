@@ -18,22 +18,35 @@ $u_1 = x^2 + y$, $u_2 = sqrt{(x^2+y^2)}$, $u_3 = e^x + e^y$
 Эксперементы будут проходить с eps = 0.01 и размером блока 64 на 1-ом и 8-ми потоках
   
 <details>
-<summary>Результаты эксперемента для $u_1$ </summary>
-  
-![u1](https://github.com/Salvatore112/Numerical-Methods-HW/assets/113641510/1e158580-d418-42f0-9983-a2dd1cc51b9b)
+<summary>Результаты эксперемента для $u_1$  </summary>
+
+Средние значения из 10-ти запусков
+![image](https://github.com/Salvatore112/Numerical-Methods-HW/assets/113641510/05c04408-b22f-48d2-9beb-0ef329a27e0f)
+)
+Данные по всем запуском, а также информация о доверительных интервалах представлены в таблице 
+[Таблица](https://github.com/Salvatore112/Numerical-Methods-HW/blob/Task1/Task1/results/u1.xlsx)
 
 </details>
 
 <details>
 <summary>Результаты эксперемента для $u_2$ </summary>
-  
-![u2](https://github.com/Salvatore112/Numerical-Methods-HW/assets/113641510/d5b96c29-f7f0-4e4e-ab55-6a959af1ebf6)
+
+Средние значения из 10-ти запусков
+![image](https://github.com/Salvatore112/Numerical-Methods-HW/assets/113641510/37799935-f82f-4e5d-afa0-def450f86bc9)
+
+Данные по всем запуском, а также информация о доверительных интервалах представлены в таблице 
+[Таблица](https://github.com/Salvatore112/Numerical-Methods-HW/blob/Task1/Task1/results/u2.xlsx)
 
 </details>
 <details>
 <summary>Результаты эксперемента для $u_3$ </summary>
-  
-![u3](https://github.com/Salvatore112/Numerical-Methods-HW/assets/113641510/8ad2e7cd-4350-48a1-9912-e5ea1e73b358)
+
+Средние значения из 10-ти запусков
+![image](https://github.com/Salvatore112/Numerical-Methods-HW/assets/113641510/505bbb29-5878-4e1c-a31f-5229936c8475)
+
+Данные по всем запуском, а также информация о доверительных интервалах представлены в таблице 
+[Таблица](https://github.com/Salvatore112/Numerical-Methods-HW/blob/Task1/Task1/results/u3.xlsx)
+
 </details>
 
 Исходя из данных результатов, можно заметить, что на меньших размерах сетки ускорения не происходит из-за того что размеры блока очень большие по сравнению с размерами сетки, что не позволяет эффективно распараллелить вычисления между потоками. Кроме того, общие причины, которые могут повлиять на ускорение распараллеливания для всех этих трех функций могут быть следующие:
@@ -45,8 +58,13 @@ $u_4$ = sin(100*x) * cos(100*y)
 
 <details>
 <summary>Результаты эксперемента для $u_4$ с теми же условиями </summary>
-  
-![u4](https://github.com/Salvatore112/Numerical-Methods-HW/assets/113641510/ac0cfe53-13e1-4092-825e-1664c39a520f)
+
+Средние значения из 10-ти запусков
+![image](https://github.com/Salvatore112/Numerical-Methods-HW/assets/113641510/e7e740ed-983c-4bf5-815b-ecd506033d40)
+
+
+Данные по всем запуском, а также информация о доверительных интервалах представлены в таблице 
+[Таблица](https://github.com/Salvatore112/Numerical-Methods-HW/blob/Task1/Task1/results/u4.xlsx)
 
 </details>
 
