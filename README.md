@@ -49,4 +49,5 @@
 аппроксимационных функционалов из конца раздела 8.2.2 (A three-point quadratic
 quasi-interpolant) книги T. Lyche & K. Morken “Spline methods”. При этом желательно
 разобраться в методе их построения.
+
 [Решение](https://github.com/Salvatore112/Numerical-Methods-HW/tree/Task2/Task2)
