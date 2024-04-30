@@ -2,11 +2,10 @@
 The image can be represented by 3 matrices `red`, `green`, and `blue` which are the image's color channels.
 The intermediate representation is SVD for `red`, `green`, `blue` channels which is essentialy 9 numpy arrays, stored in an .npz file using numpy.savez:
 
-```
-`red` = `U_red` @ `S_red` @ `V_red`
-`green` = `U_green` @ `S_green` @ `V_green`
-`blue` = `U_blue` @ `S_blue` @ `V_blue`
-```
+`red` = `U_red` @ `S_red` @ `V_red` <br>
+`green` = `U_green` @ `S_green` @ `V_green` <br>
+`blue` = `U_blue` @ `S_blue` @ `V_blue` <br>
+
 
 Each of the highlighted matrix can be read using $numpy$: First the file should be loaded with numpy.load and then each matrix can be accessed by the corresponding highlighted name (for example, the file was loaded into a variable $var$ then $var$[U_red] would return the $U$ matrix from SVD for red channel [SVD](https://en.wikipedia.org/wiki/Singular_value_decomposition))
 
