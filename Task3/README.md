@@ -2,15 +2,15 @@
 The image can be represented by 3 matrices `red`, `green`, and `blue` which are the image's color channels.
 The intermediate representation is SVD for `red`, `green`, `blue` channels which is essentialy 9 numpy arrays, stored in an .npz file using numpy.savez:
 
-`red` = ==U_red== @ ==S_red== @ ==V_red==
-`green` = ==U_green== @ ==S_green== @ ==V_green==
-`blue` = ==U_blue== @ ==S_blue== @ ==V_blue==
+`red` = `U_red` @ `S_red` @ `V_red`
+`green` = `U_green` @ `S_green` @ `V_green`
+`blue` = `U_blue` @ `S_blue` @ `V_blue`
 
 Each of the highlighted matrix can be read using $numpy$: First the file should be loaded with numpy.load and then each matrix can be accessed by the corresponding highlighted name (for example, the file was loaded into a variable $var$ then $var$[U_red] would return the $U$ matrix from SVD for red channel [SVD](https://en.wikipedia.org/wiki/Singular_value_decomposition))
 
-$NB:$ ==S_red==, ==S_green==, ==S_blue==, are only diagonals that should be transformed into diagonal matrices.
+$NB:$ `S_red`, `S_green`, `S_blue`, are only diagonals that should be transformed into diagonal matrices.
 
-There is also a one-element array ==k== containing the number of singular values.
+There is also a one-element array `k` containing the number of singular values.
 
 # Part II of the task
 Test image landscape_640x426.bmp which is compressed to a file which is 1/5 as big as the original image
