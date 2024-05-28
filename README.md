@@ -107,4 +107,4 @@ quasi-interpolant) книги T. Lyche & K. Morken “Spline methods”. При 
 Желательно максимально, насколько это возможно, распараллелить вычисления по
 данным. Оцените эффективность распараллеливания.
 
-[Решение](https://github.com/Salvatore112/Numerical-Methods-HW/tree/Task3/Task3)[WIP]
+[Решение](https://github.com/Salvatore112/Numerical-Methods-HW/tree/Task4/Task4)
